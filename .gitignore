@@ -1,0 +1,9 @@
+# Build
+Task app/bin/
+Task app/obj/
+
+# IDE
+.vs/
+
+# APP
+Task app/.env
