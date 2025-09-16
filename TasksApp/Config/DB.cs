@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 
-namespace Tasks_app.Config
+namespace TasksApp.Config
 {
     internal static class DB
     {
