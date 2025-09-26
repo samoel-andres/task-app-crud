@@ -23,6 +23,19 @@ namespace TasksApp.Services
             }
         }
         
+        internal async Task NewRecord(string title, string description)
+        {
+            var id = await repo.CreateNewRecord(title, description);
+
+            if (id == -1)
+            {
+                Console.WriteLine("Record not saved...");
+                return;
+            }
+
+            Console.WriteLine($"Record saved with ID: {id}...");
+        }
+
         
     }
 }
