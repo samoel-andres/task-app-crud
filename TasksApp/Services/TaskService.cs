@@ -36,6 +36,19 @@ namespace TasksApp.Services
             Console.WriteLine($"Record saved with ID: {id}...");
         }
 
-        
+        internal async Task UpdateRecord(int id, string title, string description, bool completed)
+        {
+            var updatedTask = await repo.UpdateRecord(id, title, description, completed);
+
+            if (updatedTask == null)
+            {
+                Console.WriteLine("Record not updated...");
+                return;
+            }
+
+            Console.WriteLine("ID\tTitle task\tDescription\tCompleted\tCreation date");
+            Console.WriteLine($"[{updatedTask.Id}\t{updatedTask.Title}\t{updatedTask.Description}\t{(updatedTask.Completed ? "Y" : "N")}\t{updatedTask.CreationDate}]");
+        }
+
     }
 }
