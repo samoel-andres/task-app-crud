@@ -50,5 +50,17 @@ namespace TasksApp.Services
             Console.WriteLine($"[{updatedTask.Id}\t{updatedTask.Title}\t{updatedTask.Description}\t{(updatedTask.Completed ? "Y" : "N")}\t{updatedTask.CreationDate}]");
         }
 
+        internal async Task RemoveRecord(int id)
+        {
+            bool removed = await repo.DeleteRecord(id);
+
+            if (!removed)
+            {
+                Console.WriteLine("Record not removed...");
+                return;
+            }
+
+            Console.WriteLine("Record removed...");
+        }
     }
 }
