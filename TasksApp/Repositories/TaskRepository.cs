@@ -44,6 +44,35 @@ namespace TasksApp.Repositories
             }
         }
 
+        internal async Task<int> CreateNewRecord(string title, string description)
+        {
+            try
+            {
+                await using SqlConnection conn = DB.GetConnection();
+                {
+                    await conn.OpenAsync();
+
+                    var query = @"INSERT INTO tareas (titulo, descripcion, fechacreacion, completada) " +
+                        "OUTPUT INSERTED.id " +
+                        "VALUES (@title, @description, @creationdate, @completed)";
+
+                    await using var cmd = new SqlCommand(query, conn);
+
+                    cmd.Parameters.AddWithValue("@title", title);
+                    cmd.Parameters.AddWithValue("@description", description);
+                    cmd.Parameters.AddWithValue("@creationdate", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@completed", false);
+
+                    var result = await cmd.ExecuteScalarAsync();
+
+                    return result != null ? (int) result : -1;
+                }
+            } catch (Exception e) {
+                Console.WriteLine("Cannot insert the item...\n" + e.Message);
+                return -1;
+            }
+        }
+
         
     }
 }
