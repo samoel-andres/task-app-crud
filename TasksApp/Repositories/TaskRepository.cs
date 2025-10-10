@@ -73,6 +73,51 @@ namespace TasksApp.Repositories
             }
         }
 
+        internal async Task<TaskModel?> UpdateRecord(int id, string title, string description, bool completed)
+        {
+            try
+            {
+                await using SqlConnection conn = DB.GetConnection();
+                {
+                    await conn.OpenAsync();
+
+                    var query = @"UPDATE tareas SET titulo = @title, descripcion = @description, completada = @completed " +
+                        "OUTPUT INSERTED.id, INSERTED.titulo, INSERTED.descripcion, INSERTED.completada, INSERTED.fechacreacion " + 
+                        " WHERE id = @id";
+
+                    await using var cmd = new SqlCommand(query, conn);
+
+                    cmd.Parameters.AddWithValue("@title", title);
+                    cmd.Parameters.AddWithValue("@description", description);
+                    cmd.Parameters.AddWithValue("@completed", completed);
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    await using var reader = await cmd.ExecuteReaderAsync();
+
+                    TaskModel updatedTask;
+
+                    if (await reader.ReadAsync())
+                    {
+                        updatedTask = new TaskModel
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("id")),
+                            Title = reader.GetString(reader.GetOrdinal("titulo")),
+                            Description = reader.GetString(reader.GetOrdinal("descripcion")),
+                            Completed = reader.GetBoolean(reader.GetOrdinal("completada")),
+                            CreationDate = reader.GetDateTime(reader.GetOrdinal("fechacreacion"))
+                        };
+
+                        return updatedTask;
+                    }
+
+                    return null;
+                }
+            } catch (Exception e) {
+                Console.WriteLine("Cannot update the item...\n" + e.Message);
+                return null;
+            }
+        }
+
         
     }
 }
