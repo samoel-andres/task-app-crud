@@ -118,6 +118,28 @@ namespace TasksApp.Repositories
             }
         }
 
-        
+        internal async Task<bool> DeleteRecord(int id)
+        {
+            try
+            {
+                await using SqlConnection conn = DB.GetConnection();
+                {
+                    await conn.OpenAsync();
+
+                    var query = "DELETE FROM tareas WHERE id = @id";
+
+                    await using var cmd = new SqlCommand(query, conn);
+
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                    return rowsAffected > 0;
+                }
+            } catch (Exception e) {
+                Console.WriteLine("Cannot delete item...\n" + e.Message);
+                return false;
+            }
+        }
     }
 }
